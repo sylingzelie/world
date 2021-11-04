@@ -19,7 +19,7 @@ public class Swagger2Config {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 //为当前包下controller生成API文档
-                .apis(RequestHandlerSelectors.basePackage("com.sy.world.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.sy.world"))
                 .paths(PathSelectors.any())
                 .build()
                 //添加登录认证
