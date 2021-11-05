@@ -12,7 +12,7 @@ public class TestController {
     @RequestMapping("t")
     public String t(@RequestParam("massge") String massge){
         System.out.println(massge);
-        return "收到消息：" + massge;
+        return "收到消息了：" + massge;
     }
 
 }
