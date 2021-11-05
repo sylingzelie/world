@@ -10,4 +10,7 @@ class WorldApplicationTests {
     void contextLoads() {
     }
 
+    public static void main(String[] args) {
+        System.out.println("15857186014".replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2"));
+    }
 }
