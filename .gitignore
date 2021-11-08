@@ -4,6 +4,12 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+<<<<<<< HEAD
+=======
+src/main/java/com/sy/world/ttt.java
+src/main/java/com/sy/world/ccc.java
+
+>>>>>>> db1dd6af119d2b63ead894472a775b7640f7ae4a
 ### STS ###
 .apt_generated
 .classpath
