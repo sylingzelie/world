@@ -15,7 +15,7 @@ public class UserController {
     @GetMapping("getUser")
     public User getUser(){
         User user = new User();
-        user.setUsername("sy");
+        user.setUsername("sy-1");
         return user;
     }
 }
