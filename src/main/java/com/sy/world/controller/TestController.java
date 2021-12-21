@@ -22,7 +22,7 @@ public class TestController {
     public static void main(String[] args) {
         TestImpl t = new TestImpl();
         Object o = t.compareTo();
-        System.out.println("test");
+        System.out.println("dev");
     }
 
 }
