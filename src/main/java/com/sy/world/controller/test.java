@@ -42,8 +42,7 @@ public class test extends Observable {
 
 
     }
-
-
-
-
+    public static void maina() {
+        System.out.println("dev");
+    }
 }

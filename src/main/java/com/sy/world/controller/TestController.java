@@ -64,7 +64,7 @@ public class TestController {
     }
 
     @RequestMapping("t")
-    public String t2(@RequestParam("massge") String massge){
+    public String t1(@RequestParam("massge") String massge){
         System.out.println(massge);
         return "收到消息了：" + massge;
     }
