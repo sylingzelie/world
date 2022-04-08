@@ -25,4 +25,12 @@ public class TestController {
         System.out.println("1");
     }
 
+
+    @RequestMapping("t")
+    public String t2(@RequestParam("massge") String massge){
+        System.out.println(massge);
+        return "收到消息了：" + massge;
+    }
+
+
 }
