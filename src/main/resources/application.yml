@@ -1,2 +1,8 @@
 server:
   port: 9001
+
+staff:
+  name: sunyang
+  age: 26
+  sex: 1
+  address: hangzhou

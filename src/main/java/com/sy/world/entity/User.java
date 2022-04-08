@@ -9,4 +9,7 @@ import lombok.Data;
 public class User{
     @ApiModelProperty(value = "用户信息")
     private String username;
+    @ApiModelProperty(value = "用户信息")
+    private Integer age;
+
 }
