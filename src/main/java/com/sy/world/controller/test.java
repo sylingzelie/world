@@ -1,5 +1,14 @@
 package com.sy.world.controller;
 
+import com.aliyun.oss.ServiceException;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
@@ -92,9 +101,45 @@ public class test extends Observable {
         });
 
     }
-    public static void maina() {
-
-
+    public static void main(String[] aers) throws NoSuchAlgorithmException {
+//        SecretKeySpec secretKey = getSecretKey("1");
+//        System.out.println(secretKey);
+        String encrypt = encrypt("2", "2");
+        System.out.println(encrypt);
+        String decrypt = decrypt(encrypt, "2");
+        System.out.println(decrypt);
     }
 
+
+    public static SecretKeySpec getSecretKey(String myKey) throws NoSuchAlgorithmException {
+        byte[] key = myKey.getBytes(StandardCharsets.UTF_8);
+        MessageDigest sha = MessageDigest.getInstance("SHA-1");
+        key = sha.digest(key);
+        key = Arrays.copyOf(key, 16);
+        return new SecretKeySpec(key, "AES");
+    }
+
+    public static String encrypt(String strToEncrypt, String secret) {
+        try {
+            SecretKeySpec secretKey = getSecretKey(secret);
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(StandardCharsets.UTF_8)));
+        } catch (Exception e) {
+            System.out.println("Error while encrypting: " + e);
+        }
+        return null;
+    }
+
+
+    public static String decrypt(String strToDecrypt, String secret) {
+        try {
+            SecretKeySpec secretKey = getSecretKey(secret);
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
+        } catch (Exception e) {
+            throw new ServiceException("数据解密失败");
+        }
+    }
 }

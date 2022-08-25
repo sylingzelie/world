@@ -37,10 +37,6 @@ public class Mgr03 {
     }
 
     public static void main(String[] args) {
-        Test test = new Test();
-        new Thread(() ->{
-            Thread.sleep(50000);
-            test.
-        });
+
     }
 }
