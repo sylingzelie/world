@@ -4,11 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.axis.utils.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.StringUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
@@ -19,21 +17,21 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class sdgwPush {
+public class SdgwPush {
     public static void main(String[] args) throws IOException {
         try {
             /*
-            *简单判断后缀名，如需通过文件流判断文件类型，
-            * 请调用getFileTypeByStream方法
-            * Excel( xls) 文件头：504B03
-            * Excel( xlsx) 文件头：D0CF11
-            * */
-            String filePath = "/Users/sunyang/Documents/山东国网6月案件（1）.xls";
+             *简单判断后缀名，如需通过文件流判断文件类型，
+             * 请调用getFileTypeByStream方法
+             * Excel( xls) 文件头：504B03
+             * Excel( xlsx) 文件头：D0CF11
+             * */
+            String filePath = "/Users/sunyang/Documents/8/山东国网6月案件（1）.xls";
             boolean xls = filePath.endsWith(".xls");
             boolean xlsx = filePath.endsWith(".xlsx");
             Workbook book;
             Sheet sheet = null;
-            InputStream inputStream = new FileInputStream(new File(filePath));
+            InputStream inputStream = new FileInputStream(filePath);
             if (xls) {
                 // 解析excel
                 POIFSFileSystem pSystem = new POIFSFileSystem(inputStream);
@@ -54,15 +52,12 @@ public class sdgwPush {
                 // 获取最后一行
                 int lastRow = sheet.getLastRowNum();
                 // 循环行数依次获取列数
-                for (int i = firstRow + 7; i < lastRow + 1; i++) {
+                for (int i = firstRow + 1; i < lastRow + 1; i++) {
                     // 获取第 i 行
                     Row row = sheet.getRow(i);
-                    if (StringUtils.isEmpty(row.getCell(1).toString().trim()) || StringUtils.isEmpty(row.getCell(2).toString().trim())) continue;
-
-
+                    if (StringUtils.isEmpty(row.getCell(1).toString().trim()) || StringUtils.isEmpty(row.getCell(2).toString().trim()))
+                        continue;
                     String pici = row.getCell(1).toString().replaceAll("\\.0", "");
-
-
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("userCode", "test02");
                     jsonObject.put("password", "888888");
@@ -78,13 +73,13 @@ public class sdgwPush {
                     jsonObject.put("imageContentList", list);
                     JSONObject jsonObject1 = pushFilePost(jsonObject.toString());
                     try {
-                        if(jsonObject1.get("errorCode").toString().equals("0")){
+                        if (jsonObject1.get("errorCode").toString().equals("0")) {
                             System.out.println(row.getCell(3).toString());
-                        }else {
+                        } else {
                             throw new RuntimeException(jsonObject1.get("errorMessage").toString());
                         }
-                    }catch (Exception e){
-                        System.out.println("错误："+ e.getMessage() + "---------" + row.getCell(3).toString());
+                    } catch (Exception e) {
+                        System.out.println("错误：" + e.getMessage() + "---------" + row.getCell(3).toString());
                     }
                 }
             }

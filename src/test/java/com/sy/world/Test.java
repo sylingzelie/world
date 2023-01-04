@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.platform.commons.util.StringUtils;
 import org.mockito.internal.util.StringUtil;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ParameterMode;
@@ -20,8 +21,14 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.*;
-
+@SpringBootTest
 public class Test {
+
+    @org.junit.Test
+    public void test(){
+        System.out.println(1);
+    }
+
     public static void main1(String[] args) throws Exception {
         List<String> name = new ArrayList<>();
         Map<String, List<Integer>> map = new HashMap<>();

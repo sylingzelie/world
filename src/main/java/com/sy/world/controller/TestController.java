@@ -1,19 +1,19 @@
 package com.sy.world.controller;
 
 
-import com.sy.world.config.WebSocket;
-import com.sy.world.tools.TestImpl;
-import com.sy.world.tools.TestT;
+import com.alibaba.fastjson.JSONObject;
+import com.sy.world.entity.User;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import sun.misc.BASE64Encoder;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("test")
@@ -28,14 +28,24 @@ public class TestController {
 
     public static void main(String[] args) {
         //待加密内容
-        String str = "测试内容";
-        //密码，长度要是8的倍数
-        String password = "12345678";
+//        String str = "测试内容";
+//        //密码，长度要是8的倍数
+//        String password = "12345678";
+//
+//        byte[] result = TestController.encrypt(str.getBytes(),password);
+//        BASE64Encoder enc=new BASE64Encoder();
+//        String mes=enc.encodeBuffer(result);
+//        System.out.println("加密后："+mes);
+        Map<String,Object> source=new HashMap<>();
+        source.put("username","张三");
+        source.put("age",1);
+        //map转为对象
+        User user =  JSONObject.parseObject(JSONObject.toJSONString(source),User.class);
+        System.out.println();
+    }
 
-        byte[] result = TestController.encrypt(str.getBytes(),password);
-        BASE64Encoder enc=new BASE64Encoder();
-        String mes=enc.encodeBuffer(result);
-        System.out.println("加密后："+mes);
+    public static Boolean test(){
+        return null;
     }
     /**
      * 加密
