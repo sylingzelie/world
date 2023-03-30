@@ -25,7 +25,7 @@ public class TestController {
         System.out.println("2");
     }
 
-    @RequestMapping("t")
+    @RequestMapping("t1")
     public String t1(@RequestParam("massge") String massge){
         System.out.println(massge);
         return "收到消息了：" + massge;
