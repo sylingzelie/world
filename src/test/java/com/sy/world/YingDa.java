@@ -1,9 +1,6 @@
 package com.sy.world;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class yingda {
+public class YingDa {
 //    public static void main(String[] args) {
 //        //以下是请求英大的接口进行扣款操作
 //        Map params = new HashMap();

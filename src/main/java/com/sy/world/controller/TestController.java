@@ -1,7 +1,7 @@
 package com.sy.world.controller;
 
 
-import com.alibaba.fastjson.JSONObject;
+//import com.alibaba.fastjson.JSONObject;
 import com.sy.world.entity.User;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,23 +26,23 @@ public class TestController {
         return "收到消息了：" + massge;
     }
 
-    public static void main(String[] args) {
-        //待加密内容
-//        String str = "测试内容";
-//        //密码，长度要是8的倍数
-//        String password = "12345678";
-//
-//        byte[] result = TestController.encrypt(str.getBytes(),password);
-//        BASE64Encoder enc=new BASE64Encoder();
-//        String mes=enc.encodeBuffer(result);
-//        System.out.println("加密后："+mes);
-        Map<String,Object> source=new HashMap<>();
-        source.put("username","张三");
-        source.put("age",1);
-        //map转为对象
-        User user =  JSONObject.parseObject(JSONObject.toJSONString(source),User.class);
-        System.out.println();
-    }
+//    public static void main(String[] args) {
+//        //待加密内容
+////        String str = "测试内容";
+////        //密码，长度要是8的倍数
+////        String password = "12345678";
+////
+////        byte[] result = TestController.encrypt(str.getBytes(),password);
+////        BASE64Encoder enc=new BASE64Encoder();
+////        String mes=enc.encodeBuffer(result);
+////        System.out.println("加密后："+mes);
+//        Map<String,Object> source=new HashMap<>();
+//        source.put("username","张三");
+//        source.put("age",1);
+//        //map转为对象
+//        User user =  JSONObject.parseObject(JSONObject.toJSONString(source),User.class);
+//        System.out.println();
+//    }
 
     public static Boolean test(){
         return null;

@@ -1,6 +1,6 @@
 package com.sy.world;
 
-import com.sy.world.entity.Staff;
+//import com.sy.world.entity.Staff;
 //import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.PropertySource;
 //import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
 
 @SpringBootApplication
-@EnableConfigurationProperties({Staff.class})
+//@EnableConfigurationProperties({Staff.class})
 @PropertySource("application.yml")
 //@EnableEurekaClient
 //@EnableHystrixDashboard

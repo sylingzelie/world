@@ -2,7 +2,6 @@ package com.sy.world;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.enums.CellExtraTypeEnum;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.sy.world.entity.*;
 import com.sy.world.tools.AESUtils;
@@ -16,7 +15,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @SpringBootTest
-public class EasyExecl {
+public class YCAccountDetail {
 
     static Integer index = 1;
 
