@@ -31,7 +31,6 @@ public class InsuranceDataListener<T> extends AnalysisEventListener<T> {
      * @param data    one row value. Is is same as {@link AnalysisContext#readRowHolder()}
      * @param context
      */
-    @Override
     public void invoke(T data, AnalysisContext context) {
         list.add(data);
     }
@@ -41,7 +40,6 @@ public class InsuranceDataListener<T> extends AnalysisEventListener<T> {
      *
      * @param context
      */
-    @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
         LOGGER.info("所有数据解析完成！");
     }

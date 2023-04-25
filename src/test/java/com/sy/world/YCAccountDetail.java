@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SpringBootTest
 public class YCAccountDetail {
@@ -100,11 +101,11 @@ public class YCAccountDetail {
     @Test
     public void easyChangeExecl() {
         InsuranceDataListener<Change> pkInsuranceDataListener = new InsuranceDataListener();
-        File change = new File("/Users/sunyang/Documents/2023/3/3-17.xlsx");
+        File change = new File("/Users/sunyang/Documents/2023/4/lvse.xlsx");
         EasyExcel.read(change.getPath(), Change.class, pkInsuranceDataListener).autoTrim(true).sheet("Sheet1").doRead();
         List<Change> pks = pkInsuranceDataListener.getList();
         List<List<String>> data = new ArrayList<>();
-        ExcelWriter excelWriter = EasyExcel.write("/Users/sunyang/Documents/2023/3/new3-17.xlsx").build();
+        ExcelWriter excelWriter = EasyExcel.write("/Users/sunyang/Documents/2023/4/newlvse.xlsx").build();
         StringBuilder sql = new StringBuilder("INSERT INTO insu_slip_account_change (\n" +
                 "\tchanged_account_code,\n" +
                 "\tchange_code,\n" +
@@ -175,5 +176,38 @@ public class YCAccountDetail {
 //                .doWrite(list);
         String str = "fApicpj+m8geQFBq6HwPoYmbbgH6iX3Qpeyv0Bltnsd/45kBWGjcfXaQBd+lrs9injRHSBOtgOgQhAJQE0rnN2ZisvbkoXsit1IYGt2YvLX7/SLye6gKty5By2aSSiXHPIKuOK/sPC85StWvwVeyGLA9qhtTJM5CIVq5m4Ro+0KIXrNiQqPyJVRyXiwZlo5uwGFiEjqZTwD0UXiVrYPtMBJx4PzZ9Y3NNSMrH77e1jhy1CfQdcVjyNx3RNiR7oBTW/CUuKkJS4bHLmF0wfpGfq2G9/vQ8/gvlvjImj/y5z1B2huexFT4FEXtse8cki1JkG3QxAAod32cqIiMw+WsOjuVbSMM9k3zNKB6sPjohgxq6oBeDUqinpXVqnzA+HNbVmkIUY39fxmzMM6uHxl6p/mWJSEkhhit79i8svzuczPbiAgpz2mFkqRCLQoeZCuB2RIaydQ9rYd0p1beRZDenL30R6MLk5eC3SK+bPpep9y3pe9oiPXateA4wUbsJREgEtyjPmcw3ThNzAWKuqu21V0xa01RILtkcL28jgQu6yyZrLbkjWFXgNlPLW7Vdfjl8BziC9CjvQaboiWK55kc8HFtH1Yozis0mbvnnljIYkY1gYly+/W1RChp8+EkX3ww21X0233HFfy60sfZHe7BRCmKvPcZDOlRo+b+2EgomzPHqg7z8iXkJJ2akGe9gImvpu/32RLOmWxCqamvyOs7ZPFtnU0UBppPYUWLywlOG+3pXFY1LI/khgBlFb+jiFVCv10gDiNQlbMsRqX9VzO32OEAUFraIQqqCns1ijfWh2uYS2QzrZRAmMumYgm6og54ahQorCqEjUNUZl1vRdxkQGcDQnsGlUA1D/raIWWqHxEB2CQS7vcc5V0KV2M0eOd8G1NGqgVGUbOqpg8Bw87Xas6Q1/zEQpYmpMLZ6im8AGYYTZAx1k/ROxlmb3AXTj0HnaeNJ2VM1f6GS9Uaxk+bvHY3Rr5rmZL/XkAQ48gdly/mmCZQvTpkmq1CRopF/xaqsTclojbzgDDLD4swm6shzXlOxQoOqF86qGp/JZT5Wp6Ien7Rc5RUqJ4TR1ev6GX0lIFuEsXMYV8RIgbgcXNhY2xZGXrp0tLpi/WNyOBqlaQ=";
         AESUtils.decryptData(str);
+    }
+
+    /**
+     * 比对永城和普康账户额度是否一致
+     */
+    @Test
+    public void easyAccountExecl() {
+        InsuranceDataListener<YCAccountEntity> pkInsuranceDataListener = new InsuranceDataListener();
+        InsuranceDataListener<YCAccountEntity> ycInsuranceDataListener = new InsuranceDataListener();
+        File pkAccount = new File("/Users/sunyang/Documents/2023/4/普康永城账户.xlsx");
+        File ycAccount = new File("/Users/sunyang/Documents/2023/4/永城账户.xlsx");
+        EasyExcel.read(pkAccount.getPath(), YCAccountEntity.class, pkInsuranceDataListener).autoTrim(true).sheet("Sheet1").doRead();
+        EasyExcel.read(ycAccount.getPath(), YCAccountEntity.class, ycInsuranceDataListener).autoTrim(true).sheet("Sheet1").doRead();
+        List<YCAccountEntity> pks = pkInsuranceDataListener.getList();
+        List<YCAccountEntity> ycs = ycInsuranceDataListener.getList();
+        List<List<String>> data = new ArrayList<>();
+        ExcelWriter excelWriter = EasyExcel.write("/Users/sunyang/Documents/2023/4/对比结果.xlsx").build();
+        Map<String, YCAccountEntity> ycAccountEntityMap = pks.stream().collect(Collectors.toMap(YCAccountEntity::getCode, Function.identity(), (k1, k2) -> k1));
+        ycs.forEach(r -> {
+            if (ycAccountEntityMap.containsKey(r.getCode())) {
+                if (!ycAccountEntityMap.get(r.getCode()).getAmt().equals(r.getAmt())) {
+                    data.add(Collections.singletonList(r.getCode()));
+                }
+            }else {
+                data.add(Collections.singletonList(r.getCode()));
+            }
+        });
+        String sheet = "Sheet".concat(String.valueOf(index));
+        WriteSheet writeSheet = EasyExcel.writerSheet(sheet).build();
+        excelWriter.write(data, writeSheet);
+        index++;
+        data.clear();
+        excelWriter.finish();
     }
 }

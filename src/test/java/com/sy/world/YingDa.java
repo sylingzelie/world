@@ -1,8 +1,8 @@
 package com.sy.world;
 
 public class YingDa {
-//    public static void main(String[] args) {
-//        //以下是请求英大的接口进行扣款操作
+    public static void main(String[] args) {
+        //以下是请求英大的接口进行扣款操作
 //        Map params = new HashMap();
 //        params.put("thirdpartyid", "ZF004");
 //        params.put("consumeWay", "1");//1-微信、i国网
@@ -17,5 +17,5 @@ public class YingDa {
 //        String responseString1 = HttpClientUtils.doPost("http://39.106.0.192:10088/ydrscore/api/chinaNetwork".concat("/queryPersonAcctBalance.do"), ecryptpParams);
 //        Map<String, Object> responseStr = ValidUtil.decrypt(responseString1);
 //        System.out.println(responseString1);
-//    }
+    }
 }
