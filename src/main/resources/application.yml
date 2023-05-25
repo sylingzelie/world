@@ -7,3 +7,53 @@
 #  sex: 1
 #  address: hangzhou
 #
+spring:
+  profiles:
+    active: ${define.env}
+    include: default,common
+  #  服务名
+  application:
+    name: @artifactId@
+  cloud:
+    nacos:
+      #       注册中心
+      discovery:
+        server-addr: ${define.nacos-addr}
+        namespace: ${define.nacos-discovery-namespace}
+        # 和要塞保持一致才可以调用
+        group: ${define.nacos-discovery-group}
+        heart-beat-interval: 1000
+        heart-beat-timeout: 3000
+      #      配置中心
+      config:
+        server-addr: ${define.nacos-addr}
+        namespace: ${define.nacos-config-namespace}
+        timeout: ${define.nacos-timeout:10000}
+        file-extension: yml
+        shared-configs[0]:
+          # 建议使用该配置文件(比如生产环境用pinghang-prod.yml)
+          group: pinghang_group
+          data-id: pinghang2-${define.nacos-config-suffix}.yml
+          refresh: true
+
+define:
+  # 平航全局配置文件全路径，优先级最高，如果文件(或配置项)不存在，则以本配置文件为主
+  ph-config-file: /home/admin/config/phConfig.yml
+  # 部署环境
+  env: xkdev
+  # 租户名称, 不能为空，一般为地区拼音，比如温州(wenzhou).
+  tenant: taizhou
+  nacos-addr: 127.0.0.1:8848
+  nacos-discovery-group: pinghang_group
+  nacos-config-namespace: pinghang-${define.env}
+  nacos-discovery-namespace: pinghang-${define.env}
+  # nacos配置文件后缀, 比如pinghang-dev.yml, 则后缀是dev
+  nacos-config-suffix: ${define.env}
+  nacos-timeout: 10000
+  # 日志目录，注意后面不能带/
+  log-base-path: /home/admin/logs
+  # rpc版本, 如果配置, 则本地优先级高于nacos
+  #fortress-rpc-version: v2.0
+  xz-base-rpc-version: v2.0
+  xz-search-rpc-version: v2.0
+  xz-xiankan-rpc-version: v2.0
