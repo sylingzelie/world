@@ -1,0 +1,10 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+if(conditon1)then(yes)
+:满足conditon1，执行该分支1;
+else
+:no，执行分支2;
+endif
+@enduml

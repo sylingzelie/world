@@ -3,58 +3,61 @@
 
 autonumber
 participant 用户 as user
-participant 线下门店 as webpos
-participant 三方控额 as thirdParty
-participant 交易服务 as core
+participant app as app
+participant 支付网关 as pay
+participant 定时任务 as timing
+participant 微信 as wx
+participant 消费服务 as core
+participant 中间服务 as custom
 
-user -> webpos : 出示二维码或身份证等等
 
-activate webpos
+user -> app : 进入app选择商品
+activate app
 
-webpos -> prepay : 校验
-activate prepay
-
-prepay -> hys : 调用好医生  "身份校验接口"
-activate hys
-return 返回结果
-return 返回结果
-webpos -> prepay : 是好医生用户（走好医生消费逻辑）
-activate prepay
-
-prepay -> hys : 调用好医生  "身份余额查询接口"
-activate hys
-return 返回客户号和余额
-
-prepay -> account : 校验客户号是否存在普康系统（不存在则自动承保）
-activate account
-return 自动承保成功
-
-prepay -> hys : 调用好医生  "门店查询接口"
-activate hys
-return 返回好医生门店code
-
-prepay -> hys : 调用好医生  "预支付接口"
-activate hys
-return 成功(二维码消费需要轮询)
-
-prepay -> prepay : 轮训调用好医生  "支付方案查询接口"
-
-user -> hys : 用户输入密码
-activate hys
-
-hys -> hys : （校验密码成功）修改订单状态可以支付
-return 密码验证成功
-
-prepay -> prepay : 轮训检测到订单可以支付
-
-return 告知门店客服订（需要自付金额）
-
-webpos -> prepay : 门店客服确认支付（调用预支付进行校验）
-activate prepay
-prepay -> pay : 校验成功进行扣款
+app -> pay : 选择完商品，点击下单
 activate pay
-pay -> hys : 普康扣款成功（调用好医生pay接口）
-activate hys
-return 好医生支付成功
-return 消费成功
+
+pay -> core : 校验客户基本信息
+activate core
+return 返回结果
+
+pay -> core : 调用支付接口
+activate core
+
+core -> custom : 校验山东国网人员状态
+activate custom
+return 返回结果
+
+core -> custom : 交易成功（生成交易记录，账户扣款），\n判断有没有联合支付，(没有则调国网扣款接口)
+activate custom
+
+custom -> custom : 判断用户是否有补偿，\n有的话计算补偿后，\n再把金额推送国网
+return 返回结果
+return 返回扣款结果
+return 返回扣款结果
+
+app -> wx : 如果有联合支付，调用微信付款接口
+activate wx
+
+wx -> app : 扣款成功，回调app
+app -> pay : 查询订单状态
+activate pay
+wx -> pay : 扣款成功，回调pay
+activate pay
+deactivate wx
+
+user -> app : 点击查询订单状态
+pay -> custom : 微信扣款成功调用中间服务插入数据
+activate custom
+custom -> custom : 判断是否是国网的，\n是的话走"9"逻辑
+return 返回结果
+
+pay -> pay : 微信支付成功，国网支付成功\n修改订单状态
+
+timing -> core : 如果订单状态是5（冻结）\n则发起退款
+activate core
+
+core -> core : 是国网的不能退款\n（再额外加个校验\n如果订单状态是未支付\n也允许退款）
+return 退款成功
+
 @enduml

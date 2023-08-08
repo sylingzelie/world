@@ -101,11 +101,11 @@ public class YCAccountDetail {
     @Test
     public void easyChangeExecl() {
         InsuranceDataListener<Change> pkInsuranceDataListener = new InsuranceDataListener();
-        File change = new File("/Users/sunyang/Documents/2023/4/lvse.xlsx");
+        File change = new File("/Users/sunyang/Documents/2023/6/612.xlsx");
         EasyExcel.read(change.getPath(), Change.class, pkInsuranceDataListener).autoTrim(true).sheet("Sheet1").doRead();
         List<Change> pks = pkInsuranceDataListener.getList();
         List<List<String>> data = new ArrayList<>();
-        ExcelWriter excelWriter = EasyExcel.write("/Users/sunyang/Documents/2023/4/newlvse.xlsx").build();
+        ExcelWriter excelWriter = EasyExcel.write("/Users/sunyang/Documents/2023/6/612xxx.xlsx").build();
         StringBuilder sql = new StringBuilder("INSERT INTO insu_slip_account_change (\n" +
                 "\tchanged_account_code,\n" +
                 "\tchange_code,\n" +
