@@ -8,15 +8,4 @@ staff:
   address: hangzhou
 
 
-#spring:
-#  application:
-#    name: springboot
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: /*
-#  metrics:
-#    tags:
-#      application: ${spring.application.name}
 
