@@ -98,6 +98,9 @@ public class YCAccountDetail {
         excelWriter.finish();
     }
 
+    public static void main(String[] args) {
+        System.out.println(new Date());
+    }
     @Test
     public void easyChangeExecl() {
         InsuranceDataListener<Change> pkInsuranceDataListener = new InsuranceDataListener();
@@ -168,7 +171,7 @@ public class YCAccountDetail {
         excelWriter.finish();
     }
 
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
 //        EasyExcel.write("C:\\Users\\dongbobo\\Desktop\\测试文件.xls")
 //                .head(ExcelData.class)
 //                .excelType(ExcelTypeEnum.XLS)
