@@ -9,3 +9,5 @@ staff:
 
 
 
+rocketmq:
+  name-server: 192.168.68.121:9876
