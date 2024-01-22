@@ -6,53 +6,42 @@ import com.alibaba.excel.write.metadata.WriteSheet;
 import com.sy.world.entity.*;
 import com.sy.world.tools.AESUtils;
 import com.sy.world.tools.InsuranceDataListener;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @SpringBootTest
-public class YCAccountDetail {
+public class CAAccountDetail {
 
     static Integer index = 1;
 
     @Test
     public void easyExecl() {
-        InsuranceDataListener<Quota> pkInsuranceDataListener = new InsuranceDataListener();
-        InsuranceDataListener<Quota> ycInsuranceDataListener = new InsuranceDataListener();
-        File pk = new File("/Users/sunyang/Documents/2024/1/111.xlsx");
-        File yc = new File("/Users/sunyang/Documents/2024/1/116B71244202300000013.xlsx");
-        EasyExcel.read(pk.getPath(), Quota.class, pkInsuranceDataListener).autoTrim(true).sheet("Sheet1").doRead();
-        EasyExcel.read(yc.getPath(), Quota.class, ycInsuranceDataListener).autoTrim(true).sheet("Sheet1").doRead();
-        List<Quota> pks = pkInsuranceDataListener.getList();
-        List<Quota> ycs = ycInsuranceDataListener.getList();
-        Map<String, Quota> pkMap = pks.stream().collect(Collectors.toMap(Quota::getAccountCode, Function.identity(), (k1, k2) -> k1));
-        Set<String> strings = pkMap.keySet();
+        InsuranceDataListener<CAQuota> pkInsuranceDataListener = new InsuranceDataListener();
+        File pk = new File("/Users/sunyang/Documents/2023/12/长安系统修改初始额度.xlsx");
+        EasyExcel.read(pk.getPath(), CAQuota.class, pkInsuranceDataListener).autoTrim(true).sheet("Sheet1").doRead();
+        List<CAQuota> pks = pkInsuranceDataListener.getList();
         List<List<String>> data = new ArrayList<>();
-        ExcelWriter excelWriter = EasyExcel.write("/Users/sunyang/Documents/2023/3/sql1.xlsx").build();
-        StringBuilder sql = new StringBuilder("update insu_slip_quota set controls_nowmon = %s where changed_account_code = '%s'");
+        ExcelWriter excelWriter = EasyExcel.write("/Users/sunyang/Documents/2023/12/sql1.xlsx").build();
+        StringBuilder sql = new StringBuilder("UPDATE CORE_SCHEMA.ACCOUNT \n" +
+                "SET ORIGIN__AMT = %s \n" +
+                "WHERE\n" +
+                "\tID = (SELECT\n" +
+                "\tacc.ID \n" +
+                "FROM\n" +
+                "\tCORE_SCHEMA.ACCOUNT acc\n" +
+                "\tLEFT JOIN CORE_SCHEMA.CUSTOMER cus ON cus.ID = acc.CUSTOMER_ID\n" +
+                "\tLEFT JOIN CORE_SCHEMA.INSU_SLIP slip ON slip.SLIP_ID = acc.SLIP_ID \n" +
+                "WHERE\n" +
+                "\tslip.SLIP_CODE = '%s'\n" +
+                "\tAND cus.CERTIFICATE = '%s');");
         List<List<String>> head = new ArrayList<>();
         head.add(Collections.singletonList("cd"));
-        ycs.stream().filter(r -> strings.contains(r.getAccountCode())).forEach(r -> {
-            String pkAmt = pkMap.get(r.getAccountCode()).getAmt();
-            if (!Objects.equals(r.getAmt(), pkAmt)) {
-                System.out.println(r.getAccountCode() + "普康额度：".concat(pkAmt).concat("  永城额度：").concat(r.getAmt()));
-                data.add(Collections.singletonList(String.format(sql.toString(), pkAmt, r.getAccountCode())));
-            }
-            if (Objects.equals(data.size(), 3000)) {
-                String sheet = "Sheet".concat(String.valueOf(index));
-                WriteSheet writeSheet = EasyExcel.writerSheet(index, sheet).head(head).build();
-                excelWriter.write(data, writeSheet);
-                index++;
-                data.clear();
-            }
-        });
+        pks.forEach(r -> data.add(Collections.singletonList(String.format(sql.toString(), r.getOrgAmt(), r.getSlipCode(), r.getCertId()))));
         String sheet = "Sheet".concat(String.valueOf(index));
         WriteSheet writeSheet = EasyExcel.writerSheet(sheet).build();
         excelWriter.write(data, writeSheet);
@@ -103,7 +92,6 @@ public class YCAccountDetail {
     public static void main(String[] args) {
         System.out.println(new Date());
     }
-
     @Test
     public void easyChangeExecl() {
         InsuranceDataListener<Change> pkInsuranceDataListener = new InsuranceDataListener();
@@ -205,7 +193,7 @@ public class YCAccountDetail {
                 if (!ycAccountEntityMap.get(r.getCode()).getAmt().equals(r.getAmt())) {
                     data.add(Collections.singletonList(r.getCode()));
                 }
-            } else {
+            }else {
                 data.add(Collections.singletonList(r.getCode()));
             }
         });
@@ -217,108 +205,6 @@ public class YCAccountDetail {
         excelWriter.finish();
     }
 
-    @Test
-    public void easyExeclYc() {
-        InsuranceDataListener<Record> pkInsuranceDataListener = new InsuranceDataListener();
-        InsuranceDataListener<Record> ycInsuranceDataListener = new InsuranceDataListener();
-        File pk = new File("/Users/sunyang/Documents/2024/永诚数据整理/永诚数据.xlsx");
-        File yc = new File("/Users/sunyang/Documents/2024/永诚数据整理/普康数据.xlsx");
-        EasyExcel.read(pk.getPath(), Record.class, pkInsuranceDataListener).autoTrim(true).sheet("Sheet1").doRead();
-        EasyExcel.read(yc.getPath(), Record.class, ycInsuranceDataListener).autoTrim(true).sheet("Sheet1").doRead();
-        List<Record> pks = pkInsuranceDataListener.getList();
-        List<Record> ycs = ycInsuranceDataListener.getList();
-        pks = pks.stream().filter(r -> !r.getSource().equals("好管家")).collect(Collectors.toList());
-        Map<String, List<Record>> collect1 = pks.stream().collect(Collectors.groupingBy(Record::getPersonNo));
-        Map<String, List<Record>> collect2 = ycs.stream().collect(Collectors.groupingBy(Record::getPersonNo));
 
-        collect1.forEach((key, value) -> {
-            if (collect2.containsKey(key)) {
-                if (value.size() != collect2.get(key).size()) {
-                    System.out.println("保单号：" + value.get(0).getPolicyNo() + "，身份证： " + key);
-                }
-            } else {
-                System.out.println(key);
-            }
-        });
-//        List<List<String>> data = new ArrayList<>();
-//        ExcelWriter excelWriter = EasyExcel.write("/Users/sunyang/Documents/2024/1/额度筛选.xlsx").build();
-
-//        String sheet = "Sheet".concat(String.valueOf(index));
-//        WriteSheet writeSheet = EasyExcel.writerSheet(sheet).build();
-//        excelWriter.write(data, writeSheet);
-//        index++;
-//        data.clear();
-//        excelWriter.finish();
-    }
-
-    @Test
-    public void easyExeclYc1() {
-        InsuranceDataListener<Record> pkInsuranceDataListener = new InsuranceDataListener();
-        InsuranceDataListener<Record> ycInsuranceDataListener = new InsuranceDataListener();
-        File pk = new File("/Users/sunyang/Documents/2024/永诚数据整理/永诚备注乱数据.xlsx");
-        File yc = new File("/Users/sunyang/Documents/2024/永诚数据整理/普康备注乱数据.xlsx");
-        EasyExcel.read(pk.getPath(), Record.class, pkInsuranceDataListener).autoTrim(true).sheet("Sheet1").doRead();
-        EasyExcel.read(yc.getPath(), Record.class, ycInsuranceDataListener).autoTrim(true).sheet("Sheet1").doRead();
-        List<Record> pks = pkInsuranceDataListener.getList();
-        List<Record> ycs = ycInsuranceDataListener.getList();
-        pks = pks.stream().filter(r -> !StringUtils.isEmpty(r.getPersonNo())).collect(Collectors.toList());
-        ycs = ycs.stream().filter(r -> !StringUtils.isEmpty(r.getPersonNo())).collect(Collectors.toList());
-        pks = pks.stream()
-                .peek(record -> {
-                    String personNo = record.getPersonNo();
-                    if (personNo != null && personNo.length() > 0) {
-                        char lastChar = personNo.charAt(personNo.length() - 1);
-                        char upperCaseLastChar = Character.toUpperCase(lastChar);
-                        String modifiedPersonNo = personNo.substring(0, personNo.length() - 1) + upperCaseLastChar;
-                        record.setPersonNo(modifiedPersonNo);
-                    }
-                })
-                .collect(Collectors.toList());
-        ycs = ycs.stream()
-                .peek(record -> {
-                    String personNo = record.getPersonNo();
-                    if (personNo != null && personNo.length() > 0) {
-                        char lastChar = personNo.charAt(personNo.length() - 1);
-                        char upperCaseLastChar = Character.toUpperCase(lastChar);
-                        String modifiedPersonNo = personNo.substring(0, personNo.length() - 1) + upperCaseLastChar;
-                        record.setPersonNo(modifiedPersonNo);
-                    }
-                })
-                .collect(Collectors.toList());
-        Map<String, List<Record>> collect1 = pks.stream().collect(Collectors.groupingBy(Record::getPersonNo));
-        Map<String, List<Record>> collect2 = ycs.stream().collect(Collectors.groupingBy(Record::getPersonNo));
-
-        List<Record> recordss = new ArrayList<>();
-        collect1.forEach((key, value) -> {
-            if (collect2.containsKey(key)) {
-                List<Record> records = collect2.get(key);
-                for (Record record1 : value) {
-                    for (Record record : records) {
-                        if (new BigDecimal(record1.getChangedAmtBefore()).compareTo(new BigDecimal(record.getChangedAmtBefore())) == 0
-                        && new BigDecimal(record1.getChangedAmt()).compareTo(new BigDecimal(record.getChangedAmt()))== 0
-                        && record1.getRemark().equals(record.getRemark())
-                                && record.getPolicyNo().equals(record1.getPolicyNo())) {
-
-                            record1.setClaimReferenceCode(record.getClaimReferenceCode());
-                            recordss.add(record1);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                System.out.println(key);
-            }
-        });
-//        List<Record> recordsss = recordss.subList(0,5);
-        List<List<String>> data = new ArrayList<>();
-//        ExcelWriter excelWriter = EasyExcel.write("/Users/sunyang/Documents/2024/1/118.xlsx").build();
-
-//        String sheet = "Sheet".concat(String.valueOf(index));
-//        WriteSheet writeSheet = EasyExcel.writerSheet(sheet).build();
-        EasyExcel.write("/Users/sunyang/Documents/2024/1/119.xlsx", Record.class).sheet("Sheet1").doWrite(recordss);
-//        index++;
-//        data.clear();
-//        excelWriter.finish();
-    }
 
 }

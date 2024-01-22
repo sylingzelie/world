@@ -7,24 +7,39 @@ import com.sy.world.tools.ValidUtil;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class YingDa {
     public static void main(String[] args) {
         //以下是请求英大的接口进行扣款操作
         Map params = new HashMap();
         params.put("thirdpartyid", "ZF004");
-        params.put("consumeWay", "1");//1-微信、i国网
-        params.put("paymentEntry", 1);//直付入口:1-英大人寿微信   2-i国网英大金融
-        params.put("customerid", "0003721873");//测试数据客户ID
+        params.put("consumeWay", "0");//1-微信、i国网
+        params.put("customerid", "0003958471");//测试数据客户ID
         params.put("functionType", "02");//功能类型:02-余额查询
         String jsonStr = JsonUtils.toJson(params);
         String ecryptStr = ValidUtil.encrypt(jsonStr);
         Map ecryptpParams = new HashMap();
         ecryptpParams.put("param", ecryptStr);
-        long l1 = System.currentTimeMillis();
-        String responseString1 = HttpClientUtils.doPost("http://39.106.0.192:10088/ydrscore/api/chinaNetwork".concat("/queryPersonAcctBalance.do"), ecryptpParams);
+        String responseString1 = HttpClientUtils.doPost("http://uygzacps.ydthlife.com/ydrscore/api/chinaNetwork".concat("/queryPersonAcctBalance.do"), ecryptpParams);
         Map<String, Object> responseStr = ValidUtil.decrypt(responseString1);
         System.out.println(responseStr);
+    }
+
+    public static void main1111(String[] args) {
+        Map queryPayParam = new HashMap();
+        queryPayParam.put("PolicyNo", "1");
+        queryPayParam.put("SeqNo", "2");
+        queryPayParam.put("BatchNo", "3");
+        String req = JsonUtils.toJson(queryPayParam);
+        String encryptStrReq;
+        // 加密
+//        encryptStrReq = Sm4demo.SM4Stringencrypt(req,newYingDaSanxiangKey);
+        encryptStrReq = ValidUtil.encrypt(req);
+        Map ecryptpParams = new HashMap();
+        ecryptpParams.put("param", encryptStrReq);
+        String responseString2 = HttpClientUtils.doPost("http://uygzacps.ydthlife.com/ydrscore/api/chinaNetwork".concat("/queryPayStatus.do"), ecryptpParams);
+        System.out.println(responseString2);
     }
 
     public static void main1(String[] args) {
